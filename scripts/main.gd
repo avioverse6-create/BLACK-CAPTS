@@ -121,15 +121,27 @@ func _make_hud() -> void:
     label.add_theme_color_override("font_color", Color(0.08, 0.13, 0.19))
     layer.add_child(label)
 
-    _add_move_button(layer, "▲", "ui_up", Vector2(112, -154))
-    _add_move_button(layer, "▼", "ui_down", Vector2(112, -54))
-    _add_move_button(layer, "◀", "ui_left", Vector2(12, -104))
-    _add_move_button(layer, "▶", "ui_right", Vector2(212, -104))
+    var camera_hint := Label.new()
+    camera_hint.text = "СВАЙП СПРАВА — ПОВОРОТ КАМЕРЫ"
+    camera_hint.anchor_left = 1.0
+    camera_hint.anchor_right = 1.0
+    camera_hint.offset_left = -360
+    camera_hint.offset_right = -22
+    camera_hint.offset_top = 20
+    camera_hint.add_theme_font_size_override("font_size", 14)
+    camera_hint.add_theme_color_override("font_color", Color(0.12, 0.18, 0.24, 0.85))
+    camera_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+    layer.add_child(camera_hint)
+
+    _add_move_button(layer, "▲", "ui_up", Vector2(96, -150))
+    _add_move_button(layer, "▼", "ui_down", Vector2(96, -54))
+    _add_move_button(layer, "◀", "ui_left", Vector2(0, -102))
+    _add_move_button(layer, "▶", "ui_right", Vector2(192, -102))
 
 func _add_move_button(layer: CanvasLayer, caption: String, action: String, offset: Vector2) -> void:
     var button := Button.new()
     button.text = caption
-    button.custom_minimum_size = Vector2(88, 88)
+    button.custom_minimum_size = Vector2(84, 84)
     button.position = offset
     button.anchor_left = 0.0
     button.anchor_top = 1.0
