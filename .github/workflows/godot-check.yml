@@ -14,6 +14,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Download bundled offline 3D assets
+        run: bash scripts/download_assets.sh
+
       - name: Download Godot 4.4.1
         run: |
           curl -L --fail --retry 3 \
