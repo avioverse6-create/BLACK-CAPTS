@@ -16,3 +16,13 @@ The player and all town pedestrians automatically use this file when it exists. 
 
 Source: https://tevy.dev/models/casual-walker
 License: CC0 1.0
+
+
+## Retro urban environment models
+
+A promising environment pack is Kenney's **Retro Urban Kit**:
+- https://opengameart.org/content/retro-urban-kit
+- 120 early-3D urban objects, low-resolution textures, GLB/FBX/OBJ.
+- CC0 license; attribution is optional.
+
+This pack has not yet been imported. It is an independent PS1-era asset set, not original GTA San Andreas content. Environment models should be added under `assets/environment/` after the archive is obtained and each GLB has been checked in Godot. Do not replace the existing map until scale, collision and mobile performance are tested.
