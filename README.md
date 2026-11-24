@@ -1,31 +1,34 @@
 # BLACK-CAPTS
 
-A mobile-oriented 3D winter-town roleplay prototype built with Godot 4.
+A mobile-oriented 3D offline roleplay prototype built with Godot 4.
 
-## Visual direction
-The target is the original low-poly GTA San Andreas / SA-MP visual era. The current scene is still a temporary blockout; authentic GTA models have not been imported.
+## Direction
+A compact open-world town with a retro low-poly atmosphere. The project uses independently published CC0 assets; it does not claim to contain original Rockstar or SA-MP files.
 
 ## Current prototype
-- Expanded snowy town blockout with a north-south avenue, a second cross street, a four-way junction and seven building placeholders.
-- Crosswalk, sidewalks, street lamps, bus stop and procedural snowfall.
-- Third-person movement with an on-screen analog joystick.
-- Swipe camera rotation and a spring-arm camera to reduce clipping through geometry.
-- Five wandering town NPCs with name tags and simple dialogue interaction; dialogue closes automatically.
-- Seven spinning collectible town tokens distributed across the town, with a live HUD counter.
-- Optional rigged GLB pedestrian model support. See [assets/characters/README.md](assets/characters/README.md).
+- Snowy town with modular 3D road pieces and imported full building models.
+- Street props, trees, crosswalk area, sidewalks and bus stop.
+- Third-person character using a rigged GLB model with idle and walk animations.
+- On-screen movement joystick, swipe camera and hold-to-sprint control.
+- Five wandering NPCs with name tags and simple local dialogue.
+- Seven collectible tokens with progress saved locally on the device.
+- A parked 3D sedan model.
 
-## Asset pipeline
-See [ASSET_SOURCES.md](ASSET_SOURCES.md) for independently made, openly licensed model candidates. These are not Rockstar assets and should not be represented as original GTA models.
+## Offline behavior
+The Android build downloads the openly licensed GLB files during GitHub Actions packaging and embeds them in the APK. All gameplay assets are loaded from the local app package. There is no multiplayer server and no runtime asset download; the current build is single-player/offline.
 
-The scripts automatically use `assets/characters/casual-walker.glb` when that file is added. The model is optional; without it, placeholder visuals remain.
+## Asset sources and licenses
+- [Asset license register](assets/ASSET_LICENSES.md)
+- [Download script](scripts/download_assets.sh)
+- [Asset source notes](ASSET_SOURCES.md)
 
-Do not commit proprietary game archives or extracted Rockstar models/textures to this repository.
+The Kenney models are CC0. The Casual Walker character is also CC0 and includes a humanoid rig with idle, walk, wave and look-around animations. These are independent assets, not extracted GTA models.
 
-## Run
-Open this folder in Godot 4.4 or newer and run the project.
+## Run locally
+Open the project in Godot 4.4 or newer. Before running locally, execute `bash scripts/download_assets.sh` once so the GLB files are present. The Android APK build runs this step automatically.
 
 ## Validation
-GitHub Actions runs a headless Godot import/script parse and briefly launches the main scene on pushes to `main`.
+GitHub Actions downloads the assets, imports the project in headless Godot, and launches the main scene briefly.
 
 ## Android APK
-An APK has not been built or tested yet. Android export still requires matching Godot export templates and Android SDK/JDK configuration.
+The Android workflow exports a debug APK and uploads it as a GitHub Actions artifact when the build succeeds.
