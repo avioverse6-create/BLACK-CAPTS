@@ -193,7 +193,9 @@ func _make_collectibles() -> void:
         Vector3(8.0, 1.0, -19.0),
         Vector3(-14.0, 1.0, 3.0),
         Vector3(14.0, 1.0, 8.0),
-        Vector3(0.0, 1.0, 25.0)
+        Vector3(0.0, 1.0, 25.0),
+        Vector3(-20.0, 1.0, -34.0),
+        Vector3(22.0, 1.0, 38.0)
     ]
     for i in range(positions.size()):
         var token := Area3D.new()
@@ -206,7 +208,7 @@ func _make_collectibles() -> void:
 func _on_token_collected() -> void:
     token_count += 1
     if token_label:
-        token_label.text = "ЖЕТОНЫ  %d / 5" % token_count
+        token_label.text = "ЖЕТОНЫ  %d / 7" % token_count
 
 func _make_player() -> void:
     player_node = CharacterBody3D.new()
@@ -217,7 +219,7 @@ func _make_player() -> void:
     player_node.interaction_message.connect(_show_dialogue)
 
 func _make_npcs() -> void:
-    var positions := [Vector3(-5, 1, -4), Vector3(6, 1, 3), Vector3(12, 1, 14)]
+    var positions := [Vector3(-5, 1, -4), Vector3(6, 1, 3), Vector3(12, 1, 14), Vector3(-12, 1, -31), Vector3(18, 1, 35)]
     for i in range(positions.size()):
         var npc := CharacterBody3D.new()
         npc.name = "TownNPC_%d" % (i + 1)
@@ -237,7 +239,7 @@ func _make_hud() -> void:
     layer.add_child(title)
 
     token_label = Label.new()
-    token_label.text = "ЖЕТОНЫ  0 / 5"
+    token_label.text = "ЖЕТОНЫ  0 / 7"
     token_label.position = Vector2(22, 48)
     token_label.add_theme_font_size_override("font_size", 15)
     token_label.add_theme_color_override("font_color", Color(0.08, 0.13, 0.19, 0.92))
