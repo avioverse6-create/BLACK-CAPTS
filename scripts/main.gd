@@ -194,8 +194,8 @@ func _make_collectibles() -> void:
         Vector3(-14.0, 1.0, 3.0),
         Vector3(14.0, 1.0, 8.0),
         Vector3(0.0, 1.0, 25.0),
-        Vector3(-20.0, 1.0, -34.0),
-        Vector3(22.0, 1.0, 38.0)
+        Vector3(-8.0, 1.0, -34.0),
+        Vector3(8.0, 1.0, 38.0)
     ]
     for i in range(positions.size()):
         var token := Area3D.new()
@@ -219,7 +219,7 @@ func _make_player() -> void:
     player_node.interaction_message.connect(_show_dialogue)
 
 func _make_npcs() -> void:
-    var positions := [Vector3(-5, 1, -4), Vector3(6, 1, 3), Vector3(12, 1, 14), Vector3(-12, 1, -31), Vector3(18, 1, 35)]
+    var positions := [Vector3(-5, 1, -4), Vector3(6, 1, 3), Vector3(12, 1, 14), Vector3(-8, 1, -34), Vector3(8, 1, 36)]
     for i in range(positions.size()):
         var npc := CharacterBody3D.new()
         npc.name = "TownNPC_%d" % (i + 1)
