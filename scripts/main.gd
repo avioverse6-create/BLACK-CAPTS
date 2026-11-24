@@ -60,26 +60,42 @@ func _make_environment() -> void:
     add_child(snow)
 
 func _make_map() -> void:
-    _box("Snow ground", Vector3(0, -0.35, 0), Vector3(64, 0.6, 64), Color(0.83, 0.89, 0.94))
-    _box("Main road", Vector3(0, 0.0, 0), Vector3(8, 0.08, 64), Color(0.25, 0.29, 0.34))
-    for z in range(-29, 30, 5):
-        _box("Center line dash", Vector3(0, 0.055, z), Vector3(0.12, 0.02, 2.2), Color(0.88, 0.87, 0.76))
+    _box("Snow ground", Vector3(0, -0.35, 0), Vector3(88, 0.6, 88), Color(0.83, 0.89, 0.94))
+
+    # Main north-south avenue.
+    _box("Main road", Vector3(0, 0.0, 0), Vector3(8, 0.08, 88), Color(0.25, 0.29, 0.34))
+    for z in range(-40, 41, 5):
+        _box("Main center line dash", Vector3(0, 0.055, z), Vector3(0.12, 0.02, 2.2), Color(0.88, 0.87, 0.76))
+    _box("West sidewalk", Vector3(-5.0, 0.06, 0), Vector3(2.0, 0.18, 88), Color(0.54, 0.59, 0.64))
+    _box("East sidewalk", Vector3(5.0, 0.06, 0), Vector3(2.0, 0.18, 88), Color(0.54, 0.59, 0.64))
+
+    # A second street creates a real four-way junction and opens a new block.
+    _box("South district road", Vector3(0, 0.0, 27), Vector3(64, 0.08, 7), Color(0.25, 0.29, 0.34))
+    for x in range(-29, 30, 5):
+        _box("District center line dash", Vector3(x, 0.055, 27), Vector3(2.2, 0.02, 0.12), Color(0.88, 0.87, 0.76))
+    _box("District north sidewalk", Vector3(0, 0.06, 22.8), Vector3(64, 0.18, 1.4), Color(0.54, 0.59, 0.64))
+    _box("District south sidewalk", Vector3(0, 0.06, 31.2), Vector3(64, 0.18, 1.4), Color(0.54, 0.59, 0.64))
     for x in range(-3, 4):
-        _box("Crosswalk stripe", Vector3(x * 0.9, 0.06, -2.0), Vector3(0.58, 0.025, 2.8), Color(0.91, 0.93, 0.94))
-    _box("West sidewalk", Vector3(-5.0, 0.06, 0), Vector3(2.0, 0.18, 64), Color(0.54, 0.59, 0.64))
-    _box("East sidewalk", Vector3(5.0, 0.06, 0), Vector3(2.0, 0.18, 64), Color(0.54, 0.59, 0.64))
+        _box("Main crosswalk stripe", Vector3(x * 0.9, 0.06, -2.0), Vector3(0.58, 0.025, 2.8), Color(0.91, 0.93, 0.94))
+        _box("District crosswalk stripe", Vector3(x * 0.9, 0.06, 27.0), Vector3(0.58, 0.025, 2.5), Color(0.91, 0.93, 0.94))
 
     _building("Cabin", Vector3(-10, 0, -9), Vector3(9, 6, 8), Color(0.43, 0.34, 0.29))
     _building("Shop", Vector3(11, 0, -5), Vector3(10, 7, 9), Color(0.34, 0.42, 0.49))
     _building("House", Vector3(-11, 0, 12), Vector3(8, 5, 8), Color(0.48, 0.43, 0.37))
+    _building("North apartment", Vector3(-15, 0, -35), Vector3(10, 9, 10), Color(0.39, 0.43, 0.48))
+    _building("North garage", Vector3(15, 0, -35), Vector3(9, 5, 9), Color(0.42, 0.37, 0.32))
+    _building("South house", Vector3(-15, 0, 38), Vector3(10, 6, 9), Color(0.47, 0.39, 0.32))
+    _building("South workshop", Vector3(15, 0, 38), Vector3(11, 6, 9), Color(0.34, 0.40, 0.43))
 
-    for x in [-22.0, -17.0, 17.0, 22.0]:
-        for z in [-20.0, -7.0, 8.0, 22.0]:
+    for x in [-25.0, -21.0, 21.0, 25.0]:
+        for z in [-20.0, -7.0, 8.0, 17.0, 37.0]:
             _tree(Vector3(x, 0, z))
 
     for side in [-1.0, 1.0]:
-        for z in [-22.0, -8.0, 8.0, 22.0]:
+        for z in [-40.0, -22.0, -8.0, 8.0, 18.0, 38.0]:
             _street_lamp(Vector3(side * 5.55, 0, z))
+    for x in [-28.0, -14.0, 14.0, 28.0]:
+        _street_lamp(Vector3(x, 0, 32.2))
     _bus_stop()
 
 func _box(label: String, at: Vector3, size: Vector3, color: Color) -> MeshInstance3D:
