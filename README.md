@@ -3,23 +3,28 @@
 A mobile-oriented 3D winter-town roleplay prototype built with Godot 4.
 
 ## Visual direction
-The target is the original low-poly GTA San Andreas / SA-MP look, not cartoon asset packs. The current scene is still a temporary blockout; authentic models have not yet been imported.
+The target is the original low-poly GTA San Andreas / SA-MP visual era. The current scene is still a temporary blockout; authentic GTA models have not been imported.
 
 ## Current prototype
-- Compact snowy blockout map with one road and three building placeholders.
-- Procedural snowfall and simple placeholder trees.
-- Third-person player movement with a custom analog mobile joystick.
-- Swipe camera rotation on the right side of the screen.
-- Basic sidewalks and facade window details in the winter blockout.
-- Three wandering NPC placeholders.
+- Compact snowy town blockout with one main road and three building placeholders.
+- Crosswalk, sidewalks, street lamps, bus stop and procedural snowfall.
+- Third-person movement with an on-screen analog joystick.
+- Swipe camera rotation and a spring-arm camera to reduce clipping through geometry.
+- Three wandering town NPCs with name tags and simple dialogue interaction.
+- Optional rigged GLB pedestrian model support. See [assets/characters/README.md](assets/characters/README.md).
 
 ## Asset pipeline
-See [GTA_ASSET_PIPELINE.md](GTA_ASSET_PIPELINE.md) for researched Blender tools that can prepare GTA San Andreas-style DFF/TXD/map/pedestrian assets for conversion to GLB and import into Godot.
+See [ASSET_SOURCES.md](ASSET_SOURCES.md) for independently made, openly licensed model candidates. These are not Rockstar assets and should not be represented as original GTA models.
 
-The tools are importers, not collections of game assets. Original game files are not included. Do not commit proprietary game archives or extracted models/textures to this repository.
+The scripts automatically use `assets/characters/casual-walker.glb` when that file is added. The model is optional; without it, placeholder visuals remain.
+
+Do not commit proprietary game archives or extracted Rockstar models/textures to this repository.
 
 ## Run
 Open this folder in Godot 4.4 or newer and run the project.
 
+## Validation
+GitHub Actions runs a headless Godot import/script parse and briefly launches the main scene on pushes to `main`.
+
 ## Android APK
-An APK has not been built or tested yet. Android export requires matching Godot export templates and Android SDK/JDK configuration. Follow the [official Godot Android export guide](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_android.html).
+An APK has not been built or tested yet. Android export still requires matching Godot export templates and Android SDK/JDK configuration.
