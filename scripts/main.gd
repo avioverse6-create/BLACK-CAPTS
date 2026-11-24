@@ -256,14 +256,14 @@ func _make_hud() -> void:
     layer.add_child(title)
 
     token_label = Label.new()
-    token_label.text = "ЖЕТОНЫ  0 / 7"
+    token_label.text = "ЖЕТОНЫ  %d / 7" % token_count
     token_label.position = Vector2(22, 48)
     token_label.add_theme_font_size_override("font_size", 15)
     token_label.add_theme_color_override("font_color", Color(0.08, 0.13, 0.19, 0.92))
     layer.add_child(token_label)
 
     objective_label = Label.new()
-    objective_label.text = "НАЙДИ 7 ЖЕТОНОВ ПО ВСЕМУ РАЙОНУ"
+    objective_label.text = "РАЙОН ИССЛЕДОВАН  •  7 / 7" if token_count >= 7 else "НАЙДИ ОСТАЛЬНЫЕ ЖЕТОНЫ  •  %d / 7" % token_count
     objective_label.position = Vector2(22, 72)
     objective_label.add_theme_font_size_override("font_size", 13)
     objective_label.add_theme_color_override("font_color", Color(0.12, 0.18, 0.24, 0.86))
