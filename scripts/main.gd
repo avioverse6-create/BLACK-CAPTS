@@ -9,6 +9,7 @@ var player_node
 var dialogue_label: Label
 var dialogue_timer: Timer
 var token_label: Label
+var objective_label: Label
 var token_count := 0
 
 func _ready() -> void:
@@ -209,6 +210,12 @@ func _on_token_collected() -> void:
     token_count += 1
     if token_label:
         token_label.text = "ЖЕТОНЫ  %d / 7" % token_count
+    if objective_label:
+        if token_count >= 7:
+            objective_label.text = "РАЙОН ИССЛЕДОВАН  •  7 / 7"
+            _show_dialogue("Задание выполнено! Ты нашёл все жетоны района.")
+        else:
+            objective_label.text = "НАЙДИ ОСТАЛЬНЫЕ ЖЕТОНЫ  •  %d / 7" % token_count
 
 func _make_player() -> void:
     player_node = CharacterBody3D.new()
@@ -244,6 +251,13 @@ func _make_hud() -> void:
     token_label.add_theme_font_size_override("font_size", 15)
     token_label.add_theme_color_override("font_color", Color(0.08, 0.13, 0.19, 0.92))
     layer.add_child(token_label)
+
+    objective_label = Label.new()
+    objective_label.text = "НАЙДИ 7 ЖЕТОНОВ ПО ВСЕМУ РАЙОНУ"
+    objective_label.position = Vector2(22, 72)
+    objective_label.add_theme_font_size_override("font_size", 13)
+    objective_label.add_theme_color_override("font_color", Color(0.12, 0.18, 0.24, 0.86))
+    layer.add_child(objective_label)
 
     var camera_hint := Label.new()
     camera_hint.text = "СВАЙП СПРАВА — КАМЕРА"
