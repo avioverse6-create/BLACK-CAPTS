@@ -2,6 +2,8 @@ extends Area3D
 
 signal collected
 
+var token_id := -1
+
 var spin_speed := 1.8
 var bob_time := 0.0
 var visual: Node3D
@@ -61,5 +63,5 @@ func _process(delta: float) -> void:
 func _on_body_entered(body: Node3D) -> void:
     if body.name != "Player":
         return
-    collected.emit()
+    collected.emit(token_id)
     queue_free()
