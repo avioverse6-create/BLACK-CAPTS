@@ -50,3 +50,13 @@ The project still has temporary blockout geometry. This file records the selecte
 - 1,799 triangles, 244 KB, rigged 56-bone humanoid with idle, walk, wave and look-around animations.
 - License listed by author: CC0 1.0. This is an independent modern casual character, not a GTA San Andreas model.
 - The Godot scripts are ready to use it when the file is manually placed at `assets/characters/casual-walker.glb`. See [assets/characters/README.md](assets/characters/README.md).
+
+
+## Best visual match found so far: Retro Urban Kit (PS1-era)
+- **Author:** Kenney
+- **Page:** https://opengameart.org/content/retro-urban-kit
+- **License:** CC0 (public domain); attribution optional.
+- **Contents:** 120 retro early-3D urban objects with low-resolution textures; separate FBX, OBJ and GLB models.
+- **Why it is relevant:** this pack targets a PS1/early-3D urban look, which is closer to the intended GTA-era atmosphere than bright toy-like city-builder packs. It is still an independent asset pack, not original GTA San Andreas/SA-MP content.
+- **Archive:** https://opengameart.org/sites/default/files/kenney_retro-urban-kit.zip
+- **Status:** source verified; archive has not yet been imported into this repository or tested in Godot.
