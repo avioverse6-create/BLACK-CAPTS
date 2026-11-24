@@ -11,8 +11,11 @@ var dialogue_timer: Timer
 var token_label: Label
 var objective_label: Label
 var token_count := 0
+var collected_token_ids: Array[int] = []
+const SAVE_PATH := "user://black_capts_progress.cfg"
 
 func _ready() -> void:
+    _load_progress()
     _make_environment()
     _make_map()
     _make_player()
@@ -199,15 +202,22 @@ func _make_collectibles() -> void:
         Vector3(8.0, 1.0, 38.0)
     ]
     for i in range(positions.size()):
+        if collected_token_ids.has(i):
+            continue
         var token := Area3D.new()
         token.name = "TownToken_%d" % (i + 1)
         token.set_script(CollectibleScript)
         token.position = positions[i]
+        token.token_id = i
         token.collected.connect(_on_token_collected)
         add_child(token)
 
-func _on_token_collected() -> void:
-    token_count += 1
+func _on_token_collected(token_id: int) -> void:
+    if collected_token_ids.has(token_id):
+        return
+    collected_token_ids.append(token_id)
+    token_count = collected_token_ids.size()
+    _save_progress()
     if token_label:
         token_label.text = "ЖЕТОНЫ  %d / 7" % token_count
     if objective_label:
@@ -376,3 +386,18 @@ func _show_dialogue(message: String) -> void:
 func _hide_dialogue() -> void:
     if dialogue_label:
         dialogue_label.visible = false
+
+func _load_progress() -> void:
+    var config := ConfigFile.new()
+    if config.load(SAVE_PATH) != OK:
+        return
+    var saved_tokens: Array = config.get_value("progress", "collected_tokens", [])
+    for value in saved_tokens:
+        if value is int and value >= 0 and value < 7 and not collected_token_ids.has(value):
+            collected_token_ids.append(value)
+    token_count = collected_token_ids.size()
+
+func _save_progress() -> void:
+    var config := ConfigFile.new()
+    config.set_value("progress", "collected_tokens", collected_token_ids)
+    config.save(SAVE_PATH)
