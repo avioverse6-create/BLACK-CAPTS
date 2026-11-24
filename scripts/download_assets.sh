@@ -32,5 +32,37 @@ download "$BASE/packs/car-kit/sedan.glb" "$ROOT/vehicles/sedan.glb"
 # Rigged character with idle, walk, wave and look-around animations (CC0).
 download "https://tevy.dev/models/casual-walker/v1/lod2.glb" "assets/characters/casual-walker.glb"
 
+# Godot 4.4 does not import Tevy's Meshopt/quantized GLB directly.
+# Decode EXT_meshopt_compression and remove KHR_mesh_quantization while
+# preserving the rig and animation clips, then replace the source asset.
+TOOLS_DIR="$(mktemp -d)"
+trap 'rm -rf "$TOOLS_DIR"' EXIT
+npm install --silent --prefix "$TOOLS_DIR" \
+  @gltf-transform/core@4 \
+  @gltf-transform/extensions@4 \
+  @gltf-transform/functions@4 \
+  meshoptimizer
+cat > "$TOOLS_DIR/convert.mjs" <<'EOF'
+import { NodeIO } from '@gltf-transform/core';
+import { EXTMeshoptCompression } from '@gltf-transform/extensions';
+import { dequantize } from '@gltf-transform/functions';
+import { MeshoptDecoder } from 'meshoptimizer';
+
+await MeshoptDecoder.ready;
+const io = new NodeIO()
+  .registerExtensions([EXTMeshoptCompression])
+  .registerDependencies({ 'meshopt.decoder': MeshoptDecoder });
+const input = process.argv[2];
+const output = process.argv[3];
+const document = await io.read(input);
+await document.transform(dequantize());
+await io.write(output, document);
+console.log('Converted character GLB for Godot 4.4:', output);
+EOF
+node "$TOOLS_DIR/convert.mjs" \
+  "assets/characters/casual-walker.glb" \
+  "$TOOLS_DIR/casual-walker-godot.glb"
+mv "$TOOLS_DIR/casual-walker-godot.glb" "assets/characters/casual-walker.glb"
+
 echo "Bundled GLB assets:"
 find assets/kenney assets/characters -name '*.glb' -printf '%p %k KB\n' | sort
