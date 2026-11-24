@@ -13,7 +13,8 @@ func _ready() -> void:
 func _make_environment() -> void:
     var world := WorldEnvironment.new()
     var env := Environment.new()
-    env.background_mode = Environment.BG_SKY
+    env.background_mode = Environment.BG_COLOR
+    env.background_color = Color(0.68, 0.79, 0.88)
     env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
     env.ambient_light_color = Color(0.68, 0.76, 0.86)
     env.ambient_light_energy = 0.8
@@ -63,17 +64,26 @@ func _make_map() -> void:
             _tree(Vector3(x, 0, z))
 
 func _box(label: String, at: Vector3, size: Vector3, color: Color) -> MeshInstance3D:
+    var body := StaticBody3D.new()
+    body.name = label + " Collider"
+    body.position = at
+    var collision := CollisionShape3D.new()
+    var shape := BoxShape3D.new()
+    shape.size = size
+    collision.shape = shape
+    body.add_child(collision)
+    add_child(body)
+
     var node := MeshInstance3D.new()
     node.name = label
     var mesh := BoxMesh.new()
     mesh.size = size
     node.mesh = mesh
-    node.position = at
     var mat := StandardMaterial3D.new()
     mat.albedo_color = color
     mat.roughness = 1.0
     node.material_override = mat
-    add_child(node)
+    body.add_child(node)
     return node
 
 func _building(label: String, at: Vector3, size: Vector3, color: Color) -> void:
@@ -81,7 +91,7 @@ func _building(label: String, at: Vector3, size: Vector3, color: Color) -> void:
     _box(label + " snow roof", at + Vector3(0, size.y + 0.18, 0), Vector3(size.x + 0.5, 0.35, size.z + 0.5), Color(0.93, 0.97, 1.0))
 
 func _tree(at: Vector3) -> void:
-    var trunk := _box("Tree trunk", at + Vector3(0, 1.1, 0), Vector3(0.45, 2.2, 0.45), Color(0.27, 0.20, 0.16))
+    _box("Tree trunk", at + Vector3(0, 1.1, 0), Vector3(0.45, 2.2, 0.45), Color(0.27, 0.20, 0.16))
     var crown := _box("Snowy pine", at + Vector3(0, 3.0, 0), Vector3(2.1, 2.5, 2.1), Color(0.72, 0.83, 0.85))
     crown.rotation_degrees.y = 45
 
@@ -93,19 +103,41 @@ func _make_player() -> void:
     add_child(player)
 
 func _make_npcs() -> void:
-    for i in range(3):
+    var positions := [Vector3(-5, 1, -4), Vector3(6, 1, 3), Vector3(12, 1, 14)]
+    for i in range(positions.size()):
         var npc := CharacterBody3D.new()
         npc.name = "TownNPC_%d" % (i + 1)
         npc.set_script(NPCScript)
-        npc.position = Vector3([-5.0, 6.0, 12.0][i], 1.0, [-4.0, 3.0, 14.0][i])
+        npc.position = positions[i]
         add_child(npc)
 
 func _make_hud() -> void:
     var layer := CanvasLayer.new()
     add_child(layer)
     var label := Label.new()
-    label.text = "BLACK-CAPTS  •  WINTER TEST\nWASD / стрелки — движение   •   E — поговорить"
+    label.text = "BLACK-CAPTS  •  WINTER TEST"
     label.position = Vector2(22, 18)
     label.add_theme_font_size_override("font_size", 18)
     label.add_theme_color_override("font_color", Color(0.08, 0.13, 0.19))
     layer.add_child(label)
+
+    _add_move_button(layer, "▲", "ui_up", Vector2(112, -154))
+    _add_move_button(layer, "▼", "ui_down", Vector2(112, -54))
+    _add_move_button(layer, "◀", "ui_left", Vector2(12, -104))
+    _add_move_button(layer, "▶", "ui_right", Vector2(212, -104))
+
+func _add_move_button(layer: CanvasLayer, caption: String, action: String, offset: Vector2) -> void:
+    var button := Button.new()
+    button.text = caption
+    button.custom_minimum_size = Vector2(88, 88)
+    button.position = offset
+    button.anchor_left = 0.0
+    button.anchor_top = 1.0
+    button.anchor_right = 0.0
+    button.anchor_bottom = 1.0
+    button.add_theme_font_size_override("font_size", 28)
+    button.add_theme_color_override("font_color", Color(0.1, 0.16, 0.22))
+    button.modulate = Color(1, 1, 1, 0.82)
+    button.button_down.connect(func(): Input.action_press(action))
+    button.button_up.connect(func(): Input.action_release(action))
+    layer.add_child(button)
