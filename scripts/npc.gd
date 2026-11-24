@@ -115,7 +115,7 @@ func _play_visual_animation(wanted: String) -> void:
     if animation_player == null or current_visual_animation == wanted:
         return
     for animation_name in animation_player.get_animation_list():
-        if animation_name.to_lower() == wanted:
+        if animation_name.to_lower().contains(wanted):
             animation_player.play(animation_name)
             current_visual_animation = wanted
             return
