@@ -10,7 +10,8 @@ The target is the original low-poly GTA San Andreas / SA-MP visual era. The curr
 - Crosswalk, sidewalks, street lamps, bus stop and procedural snowfall.
 - Third-person movement with an on-screen analog joystick.
 - Swipe camera rotation and a spring-arm camera to reduce clipping through geometry.
-- Three wandering town NPCs with name tags and simple dialogue interaction.
+- Three wandering town NPCs with name tags and simple dialogue interaction; dialogue closes automatically.
+- Five spinning collectible town tokens with a live HUD counter.
 - Optional rigged GLB pedestrian model support. See [assets/characters/README.md](assets/characters/README.md).
 
 ## Asset pipeline
