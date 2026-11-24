@@ -31,8 +31,9 @@ public class BlackCapsBootstrap : MonoBehaviour
     }
 
     Material Mat(Color c, float metallic=0f) {
-        var m = new Material(Shader.Find("Universal Render Pipeline/Lit"));
-        if (m.shader == null) m.shader = Shader.Find("Standard");
+        var shader = Shader.Find("Universal Render Pipeline/Lit");
+        if (shader == null) shader = Shader.Find("Standard");
+        var m = new Material(shader);
         m.color = c; m.SetFloat("_Metallic", metallic); return m;
     }
     void Cube(string n, Vector3 p, Vector3 s, Color c) {
