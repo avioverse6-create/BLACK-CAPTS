@@ -2,6 +2,7 @@ extends Node3D
 
 const PlayerScript = preload("res://scripts/player.gd")
 const NPCScript = preload("res://scripts/npc.gd")
+const JoystickScript = preload("res://scripts/mobile_joystick.gd")
 
 func _ready() -> void:
     _make_environment()
@@ -54,6 +55,8 @@ func _make_map() -> void:
     _box("Snow ground", Vector3(0, -0.35, 0), Vector3(64, 0.6, 64), Color(0.83, 0.89, 0.94))
     _box("Main road", Vector3(0, 0.0, 0), Vector3(8, 0.08, 64), Color(0.25, 0.29, 0.34))
     _box("Road marking", Vector3(0, 0.055, 0), Vector3(0.12, 0.02, 64), Color(0.88, 0.87, 0.76))
+    _box("West sidewalk", Vector3(-5.0, 0.06, 0), Vector3(2.0, 0.18, 64), Color(0.54, 0.59, 0.64))
+    _box("East sidewalk", Vector3(5.0, 0.06, 0), Vector3(2.0, 0.18, 64), Color(0.54, 0.59, 0.64))
 
     _building("Cabin", Vector3(-10, 0, -9), Vector3(9, 6, 8), Color(0.43, 0.34, 0.29))
     _building("Shop", Vector3(11, 0, -5), Vector3(10, 7, 9), Color(0.34, 0.42, 0.49))
@@ -89,6 +92,19 @@ func _box(label: String, at: Vector3, size: Vector3, color: Color) -> MeshInstan
 func _building(label: String, at: Vector3, size: Vector3, color: Color) -> void:
     _box(label, at + Vector3(0, size.y * 0.5, 0), size, color)
     _box(label + " snow roof", at + Vector3(0, size.y + 0.18, 0), Vector3(size.x + 0.5, 0.35, size.z + 0.5), Color(0.93, 0.97, 1.0))
+    var window_mat := StandardMaterial3D.new()
+    window_mat.albedo_color = Color(0.12, 0.20, 0.27)
+    window_mat.roughness = 0.7
+    for side in [-1.0, 1.0]:
+        for row in range(2):
+            for col in range(2):
+                var window := MeshInstance3D.new()
+                var pane := BoxMesh.new()
+                pane.size = Vector3(1.25, 1.05, 0.08)
+                window.mesh = pane
+                window.material_override = window_mat
+                window.position = at + Vector3(side * (size.x * 0.5 + 0.045), 1.8 + row * 2.0, -1.8 + col * 3.5)
+                add_child(window)
 
 func _tree(at: Vector3) -> void:
     _box("Tree trunk", at + Vector3(0, 1.1, 0), Vector3(0.45, 2.2, 0.45), Color(0.27, 0.20, 0.16))
@@ -114,18 +130,19 @@ func _make_npcs() -> void:
 func _make_hud() -> void:
     var layer := CanvasLayer.new()
     add_child(layer)
-    var label := Label.new()
-    label.text = "BLACK-CAPTS  •  WINTER TEST"
-    label.position = Vector2(22, 18)
-    label.add_theme_font_size_override("font_size", 18)
-    label.add_theme_color_override("font_color", Color(0.08, 0.13, 0.19))
-    layer.add_child(label)
+
+    var title := Label.new()
+    title.text = "BLACK-CAPTS  •  WINTER TEST"
+    title.position = Vector2(22, 18)
+    title.add_theme_font_size_override("font_size", 18)
+    title.add_theme_color_override("font_color", Color(0.08, 0.13, 0.19))
+    layer.add_child(title)
 
     var camera_hint := Label.new()
-    camera_hint.text = "СВАЙП СПРАВА — ПОВОРОТ КАМЕРЫ"
+    camera_hint.text = "СВАЙП СПРАВА — КАМЕРА"
     camera_hint.anchor_left = 1.0
     camera_hint.anchor_right = 1.0
-    camera_hint.offset_left = -360
+    camera_hint.offset_left = -300
     camera_hint.offset_right = -22
     camera_hint.offset_top = 20
     camera_hint.add_theme_font_size_override("font_size", 14)
@@ -133,23 +150,26 @@ func _make_hud() -> void:
     camera_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
     layer.add_child(camera_hint)
 
-    _add_move_button(layer, "▲", "ui_up", Vector2(96, -150))
-    _add_move_button(layer, "▼", "ui_down", Vector2(96, -54))
-    _add_move_button(layer, "◀", "ui_left", Vector2(0, -102))
-    _add_move_button(layer, "▶", "ui_right", Vector2(192, -102))
+    var joystick := Control.new()
+    joystick.name = "MobileJoystick"
+    joystick.set_script(JoystickScript)
+    joystick.anchor_left = 0.0
+    joystick.anchor_top = 1.0
+    joystick.anchor_right = 0.0
+    joystick.anchor_bottom = 1.0
+    joystick.offset_left = 24
+    joystick.offset_top = -194
+    joystick.offset_right = 194
+    joystick.offset_bottom = -24
+    layer.add_child(joystick)
 
-func _add_move_button(layer: CanvasLayer, caption: String, action: String, offset: Vector2) -> void:
-    var button := Button.new()
-    button.text = caption
-    button.custom_minimum_size = Vector2(84, 84)
-    button.position = offset
-    button.anchor_left = 0.0
-    button.anchor_top = 1.0
-    button.anchor_right = 0.0
-    button.anchor_bottom = 1.0
-    button.add_theme_font_size_override("font_size", 28)
-    button.add_theme_color_override("font_color", Color(0.1, 0.16, 0.22))
-    button.modulate = Color(1, 1, 1, 0.82)
-    button.button_down.connect(func(): Input.action_press(action))
-    button.button_up.connect(func(): Input.action_release(action))
-    layer.add_child(button)
+    var move_label := Label.new()
+    move_label.text = "ДВИЖЕНИЕ"
+    move_label.position = Vector2(56, 18)
+    move_label.anchor_top = 1.0
+    move_label.anchor_bottom = 1.0
+    move_label.offset_top = -34
+    move_label.offset_bottom = -12
+    move_label.add_theme_font_size_override("font_size", 11)
+    move_label.add_theme_color_override("font_color", Color(0.22, 0.29, 0.36, 0.72))
+    layer.add_child(move_label)
