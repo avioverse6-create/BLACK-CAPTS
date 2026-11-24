@@ -8,8 +8,9 @@ The target is the original low-poly GTA San Andreas / SA-MP look, not cartoon as
 ## Current prototype
 - Compact snowy blockout map with one road and three building placeholders.
 - Procedural snowfall and simple placeholder trees.
-- Third-person player movement with on-screen directional controls.
+- Third-person player movement with a custom analog mobile joystick.
 - Swipe camera rotation on the right side of the screen.
+- Basic sidewalks and facade window details in the winter blockout.
 - Three wandering NPC placeholders.
 
 ## Asset pipeline
