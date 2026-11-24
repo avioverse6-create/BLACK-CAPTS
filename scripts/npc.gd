@@ -22,7 +22,7 @@ func _ready() -> void:
     add_to_group("town_npcs")
     home = global_position
     target = home
-    display_name = "Житель %s" % str(get_index() + 1)
+    display_name = "Житель %s" % str(name).get_slice("_", 1)
     _make_collision()
     _load_character_model()
     _make_name_tag()
