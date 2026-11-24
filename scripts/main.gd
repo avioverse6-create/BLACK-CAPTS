@@ -3,16 +3,20 @@ extends Node3D
 const PlayerScript = preload("res://scripts/player.gd")
 const NPCScript = preload("res://scripts/npc.gd")
 const JoystickScript = preload("res://scripts/mobile_joystick.gd")
+const CollectibleScript = preload("res://scripts/collectible.gd")
 
 var player_node
 var dialogue_label: Label
 var dialogue_timer: Timer
+var token_label: Label
+var token_count := 0
 
 func _ready() -> void:
     _make_environment()
     _make_map()
     _make_player()
     _make_npcs()
+    _make_collectibles()
     _make_hud()
 
 func _make_environment() -> void:
@@ -167,6 +171,27 @@ func _tree(at: Vector3) -> void:
     var crown := _box("Snowy pine", at + Vector3(0, 3.0, 0), Vector3(2.1, 2.5, 2.1), Color(0.72, 0.83, 0.85))
     crown.rotation_degrees.y = 45
 
+func _make_collectibles() -> void:
+    var positions := [
+        Vector3(-7.0, 1.0, -16.0),
+        Vector3(8.0, 1.0, -19.0),
+        Vector3(-14.0, 1.0, 3.0),
+        Vector3(14.0, 1.0, 8.0),
+        Vector3(0.0, 1.0, 25.0)
+    ]
+    for i in range(positions.size()):
+        var token := Area3D.new()
+        token.name = "TownToken_%d" % (i + 1)
+        token.set_script(CollectibleScript)
+        token.position = positions[i]
+        token.collected.connect(_on_token_collected)
+        add_child(token)
+
+func _on_token_collected() -> void:
+    token_count += 1
+    if token_label:
+        token_label.text = "ЖЕТОНЫ  %d / 5" % token_count
+
 func _make_player() -> void:
     player_node = CharacterBody3D.new()
     player_node.name = "Player"
@@ -194,6 +219,13 @@ func _make_hud() -> void:
     title.add_theme_font_size_override("font_size", 18)
     title.add_theme_color_override("font_color", Color(0.08, 0.13, 0.19))
     layer.add_child(title)
+
+    token_label = Label.new()
+    token_label.text = "ЖЕТОНЫ  0 / 5"
+    token_label.position = Vector2(22, 48)
+    token_label.add_theme_font_size_override("font_size", 15)
+    token_label.add_theme_color_override("font_color", Color(0.08, 0.13, 0.19, 0.92))
+    layer.add_child(token_label)
 
     var camera_hint := Label.new()
     camera_hint.text = "СВАЙП СПРАВА — КАМЕРА"
