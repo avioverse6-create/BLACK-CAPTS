@@ -6,6 +6,7 @@ const JoystickScript = preload("res://scripts/mobile_joystick.gd")
 
 var player_node
 var dialogue_label: Label
+var dialogue_timer: Timer
 
 func _ready() -> void:
     _make_environment()
@@ -234,6 +235,13 @@ func _make_hud() -> void:
     dialogue_label.visible = false
     layer.add_child(dialogue_label)
 
+    dialogue_timer = Timer.new()
+    dialogue_timer.name = "DialogueAutoHide"
+    dialogue_timer.one_shot = true
+    dialogue_timer.wait_time = 5.0
+    dialogue_timer.timeout.connect(_hide_dialogue)
+    add_child(dialogue_timer)
+
     var interact_button := Button.new()
     interact_button.text = "ПОГОВОРИТЬ"
     interact_button.anchor_left = 1.0
@@ -277,3 +285,9 @@ func _show_dialogue(message: String) -> void:
     if dialogue_label:
         dialogue_label.text = message
         dialogue_label.visible = true
+        if dialogue_timer:
+            dialogue_timer.start()
+
+func _hide_dialogue() -> void:
+    if dialogue_label:
+        dialogue_label.visible = false
