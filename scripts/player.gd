@@ -15,6 +15,7 @@ var camera_pitch := deg_to_rad(13.0)
 var look_finger := -1
 var animation_player: AnimationPlayer
 var current_visual_animation := ""
+var sprinting := false
 
 func _ready() -> void:
     _make_collision()
@@ -101,8 +102,9 @@ func _physics_process(delta: float) -> void:
 
     if direction.length() > 0.05:
         direction = direction.normalized()
-        velocity.x = move_toward(velocity.x, direction.x * SPEED, ACCELERATION * delta)
-        velocity.z = move_toward(velocity.z, direction.z * SPEED, ACCELERATION * delta)
+        var current_speed := SPEED * (1.55 if sprinting else 1.0)
+        velocity.x = move_toward(velocity.x, direction.x * current_speed, ACCELERATION * delta)
+        velocity.z = move_toward(velocity.z, direction.z * current_speed, ACCELERATION * delta)
         rotation.y = lerp_angle(rotation.y, atan2(-direction.x, -direction.z), delta * 9.0)
         _play_visual_animation("walk")
     else:
@@ -139,3 +141,6 @@ func interact() -> void:
         interaction_message.emit(str(nearest.call("get_dialogue")))
     else:
         interaction_message.emit("Подойдите ближе к жителю.")
+
+func set_sprinting(enabled: bool) -> void:
+    sprinting = enabled
