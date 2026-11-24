@@ -4,7 +4,7 @@ const PlayerScript = preload("res://scripts/player.gd")
 const NPCScript = preload("res://scripts/npc.gd")
 const JoystickScript = preload("res://scripts/mobile_joystick.gd")
 
-var player_node: CharacterBody3D
+var player_node
 var dialogue_label: Label
 
 func _ready() -> void:
@@ -259,7 +259,7 @@ func _make_hud() -> void:
     button_style.border_width_bottom = 1
     button_style.border_color = Color(0.65, 0.78, 0.88, 0.42)
     interact_button.add_theme_stylebox_override("normal", button_style)
-    interact_button.pressed.connect(player_node.interact)
+    interact_button.pressed.connect(Callable(player_node, "interact"))
     layer.add_child(interact_button)
 
     var move_label := Label.new()
