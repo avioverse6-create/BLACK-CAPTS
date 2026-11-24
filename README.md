@@ -6,12 +6,12 @@ A mobile-oriented 3D winter-town roleplay prototype built with Godot 4.
 The target is the original low-poly GTA San Andreas / SA-MP visual era. The current scene is still a temporary blockout; authentic GTA models have not been imported.
 
 ## Current prototype
-- Compact snowy town blockout with one main road and three building placeholders.
+- Expanded snowy town blockout with a north-south avenue, a second cross street, a four-way junction and seven building placeholders.
 - Crosswalk, sidewalks, street lamps, bus stop and procedural snowfall.
 - Third-person movement with an on-screen analog joystick.
 - Swipe camera rotation and a spring-arm camera to reduce clipping through geometry.
-- Three wandering town NPCs with name tags and simple dialogue interaction; dialogue closes automatically.
-- Five spinning collectible town tokens with a live HUD counter.
+- Five wandering town NPCs with name tags and simple dialogue interaction; dialogue closes automatically.
+- Seven spinning collectible town tokens distributed across the town, with a live HUD counter.
 - Optional rigged GLB pedestrian model support. See [assets/characters/README.md](assets/characters/README.md).
 
 ## Asset pipeline
