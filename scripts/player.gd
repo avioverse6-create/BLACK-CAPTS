@@ -1,21 +1,56 @@
 extends CharacterBody3D
 
+signal interaction_message(message: String)
+
 const SPEED := 5.0
 const ACCELERATION := 14.0
 const GRAVITY := 18.0
 const LOOK_SENSITIVITY := 0.0045
 const PITCH_MIN := deg_to_rad(-48.0)
 const PITCH_MAX := deg_to_rad(22.0)
+const MODEL_PATH := "res://assets/characters/casual-walker.glb"
 
 var camera_pivot: Node3D
 var camera_pitch := deg_to_rad(-13.0)
 var look_finger := -1
+var animation_player: AnimationPlayer
+var current_visual_animation := ""
 
 func _ready() -> void:
+    _make_collision()
+    _load_character_model()
+    _make_camera()
+
+func _make_collision() -> void:
+    var collision := CollisionShape3D.new()
+    var shape := CapsuleShape3D.new()
+    shape.radius = 0.36
+    shape.height = 1.8
+    collision.shape = shape
+    collision.position.y = 0.9
+    add_child(collision)
+
+func _load_character_model() -> void:
+    if ResourceLoader.exists(MODEL_PATH):
+        var packed := load(MODEL_PATH) as PackedScene
+        if packed:
+            var model := packed.instantiate()
+            var visual := Node3D.new()
+            visual.name = "CharacterVisual"
+            visual.rotation.y = PI
+            visual.add_child(model)
+            add_child(visual)
+            var players := visual.find_children("*", "AnimationPlayer", true, false)
+            if not players.is_empty():
+                animation_player = players[0] as AnimationPlayer
+            _play_visual_animation("idle")
+            return
+
     var capsule := CapsuleMesh.new()
-    capsule.radius = 0.38
+    capsule.radius = 0.36
     capsule.height = 1.8
     var body := MeshInstance3D.new()
+    body.name = "TemporaryPlayerPlaceholder"
     body.mesh = capsule
     var mat := StandardMaterial3D.new()
     mat.albedo_color = Color(0.18, 0.32, 0.48)
@@ -23,22 +58,20 @@ func _ready() -> void:
     body.position.y = 0.9
     add_child(body)
 
-    var collision := CollisionShape3D.new()
-    var shape := CapsuleShape3D.new()
-    shape.radius = 0.38
-    shape.height = 1.8
-    collision.shape = shape
-    collision.position.y = 0.9
-    add_child(collision)
-
+func _make_camera() -> void:
     camera_pivot = Node3D.new()
     camera_pivot.position = Vector3(0, 1.45, 0)
     add_child(camera_pivot)
+    var spring := SpringArm3D.new()
+    spring.spring_length = 6.5
+    spring.margin = 0.25
+    spring.position = Vector3(0, 1.0, 0)
+    camera_pivot.add_child(spring)
     var camera := Camera3D.new()
-    camera.position = Vector3(0, 2.4, 6.5)
+    camera.position = Vector3(0, 0.25, 0)
     camera.rotation.x = camera_pitch
     camera.current = true
-    camera_pivot.add_child(camera)
+    spring.add_child(camera)
 
 func _input(event: InputEvent) -> void:
     var screen_width := get_viewport().get_visible_rect().size.x
@@ -56,7 +89,8 @@ func _input(event: InputEvent) -> void:
             PITCH_MIN,
             PITCH_MAX
         )
-        var camera := camera_pivot.get_child(0) as Camera3D
+        var spring := camera_pivot.get_child(0) as SpringArm3D
+        var camera := spring.get_child(0) as Camera3D
         camera.rotation.x = camera_pitch
 
 func _physics_process(delta: float) -> void:
@@ -69,12 +103,38 @@ func _physics_process(delta: float) -> void:
         velocity.x = move_toward(velocity.x, direction.x * SPEED, ACCELERATION * delta)
         velocity.z = move_toward(velocity.z, direction.z * SPEED, ACCELERATION * delta)
         rotation.y = lerp_angle(rotation.y, atan2(-direction.x, -direction.z), delta * 9.0)
+        _play_visual_animation("walk")
     else:
         velocity.x = move_toward(velocity.x, 0.0, ACCELERATION * delta)
         velocity.z = move_toward(velocity.z, 0.0, ACCELERATION * delta)
+        _play_visual_animation("idle")
 
     if not is_on_floor():
         velocity.y -= GRAVITY * delta
     else:
         velocity.y = 0.0
     move_and_slide()
+
+func _play_visual_animation(wanted: String) -> void:
+    if animation_player == null or current_visual_animation == wanted:
+        return
+    for animation_name in animation_player.get_animation_list():
+        if animation_name.to_lower() == wanted:
+            animation_player.play(animation_name)
+            current_visual_animation = wanted
+            return
+
+func interact() -> void:
+    var nearest: Node3D = null
+    var nearest_distance := 3.2
+    for npc in get_tree().get_nodes_in_group("town_npcs"):
+        if not is_instance_valid(npc):
+            continue
+        var distance := global_position.distance_to(npc.global_position)
+        if distance < nearest_distance:
+            nearest = npc
+            nearest_distance = distance
+    if nearest and nearest.has_method("get_dialogue"):
+        interaction_message.emit(nearest.get_dialogue())
+    else:
+        interaction_message.emit("Подойдите ближе к жителю.")
