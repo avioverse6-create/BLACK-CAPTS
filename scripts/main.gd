@@ -103,6 +103,7 @@ func _building(label: String, at: Vector3, size: Vector3, color: Color) -> void:
                 pane.size = Vector3(1.25, 1.05, 0.08)
                 window.mesh = pane
                 window.material_override = window_mat
+                window.rotation.y = PI * 0.5
                 window.position = at + Vector3(side * (size.x * 0.5 + 0.045), 1.8 + row * 2.0, -1.8 + col * 3.5)
                 add_child(window)
 
