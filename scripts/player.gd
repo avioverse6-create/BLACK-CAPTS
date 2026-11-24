@@ -6,12 +6,12 @@ const SPEED := 5.0
 const ACCELERATION := 14.0
 const GRAVITY := 18.0
 const LOOK_SENSITIVITY := 0.0045
-const PITCH_MIN := deg_to_rad(-48.0)
-const PITCH_MAX := deg_to_rad(22.0)
+const PITCH_MIN := deg_to_rad(-12.0)
+const PITCH_MAX := deg_to_rad(48.0)
 const MODEL_PATH := "res://assets/characters/casual-walker.glb"
 
 var camera_pivot: Node3D
-var camera_pitch := deg_to_rad(-13.0)
+var camera_pitch := deg_to_rad(13.0)
 var look_finger := -1
 var animation_player: AnimationPlayer
 var current_visual_animation := ""
@@ -65,11 +65,12 @@ func _make_camera() -> void:
     var spring := SpringArm3D.new()
     spring.spring_length = 6.5
     spring.margin = 0.25
+    spring.rotation.y = PI
     spring.position = Vector3(0, 1.0, 0)
     camera_pivot.add_child(spring)
     var camera := Camera3D.new()
     camera.position = Vector3(0, 0.25, 0)
-    camera.rotation.x = camera_pitch
+    camera.rotation = Vector3(camera_pitch, PI, 0)
     camera.current = true
     spring.add_child(camera)
 
@@ -135,6 +136,6 @@ func interact() -> void:
             nearest = npc
             nearest_distance = distance
     if nearest and nearest.has_method("get_dialogue"):
-        interaction_message.emit(nearest.get_dialogue())
+        interaction_message.emit(str(nearest.call("get_dialogue")))
     else:
         interaction_message.emit("Подойдите ближе к жителю.")
