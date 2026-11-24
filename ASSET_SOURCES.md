@@ -42,3 +42,11 @@ These are candidate packs to import into Godot. They are not yet included in the
 
 ## Current status
 The project still has temporary blockout geometry. This file records the selected source packs; it does not claim that those models have already been downloaded or integrated.
+
+
+## Rigged pedestrian character (optional)
+- **Casual Walker — tevy**: https://tevy.dev/models/casual-walker
+- Direct pinned LOD2 GLB: https://tevy.dev/models/casual-walker/v1/lod2.glb
+- 1,799 triangles, 244 KB, rigged 56-bone humanoid with idle, walk, wave and look-around animations.
+- License listed by author: CC0 1.0. This is an independent modern casual character, not a GTA San Andreas model.
+- The Godot scripts are ready to use it when the file is manually placed at `assets/characters/casual-walker.glb`. See [assets/characters/README.md](assets/characters/README.md).
