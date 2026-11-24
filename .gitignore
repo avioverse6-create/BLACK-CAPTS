@@ -1,0 +1,14 @@
+# Keep source game archives and extracted proprietary assets out of Git.
+*.img
+*.dff
+*.txd
+*.col
+*.ifp
+*.ipl
+*.ide
+*.rpf
+
+# Local conversion workspace
+/source_game_assets/
+/local_gta_assets/
+/asset_work/
