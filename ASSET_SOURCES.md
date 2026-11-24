@@ -26,6 +26,13 @@ These are candidate packs to import into Godot. They are not yet included in the
 - Candidate ready-rigged stylized characters; verify the current license/version on the publisher page.
 - Target folder: `assets/characters/`
 
+
+## Additional CC0 modular city kit (secondary props only)
+- **Kayquer — Low Poly City Kit**: https://github.com/kayquer/kit-cidade-lowpoly
+- 129 GLB/glTF models including modular road tiles, buildings, vehicles, street furniture and trees; repository documents CC0 1.0.
+- This is a clean stylized low-poly kit, **not** authentic GTA SA geometry. Use only as a temporary source for compatible modular pieces if the visual style fits; do not pass it off as original SA assets.
+- The repository states models are Y-up, front facing -Z, and designed for a 2 m grid; individual models are generally under 1,500 triangles.
+
 ## Import rules
 1. Prefer GLB/glTF for Godot.
 2. Keep one rig for the player and NPCs where possible, so animation clips can be reused.
