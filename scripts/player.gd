@@ -74,7 +74,7 @@ func _make_camera() -> void:
     camera.current = true
     spring.add_child(camera)
 
-func _input(event: InputEvent) -> void:
+func _unhandled_input(event: InputEvent) -> void:
     var screen_width := get_viewport().get_visible_rect().size.x
 
     if event is InputEventScreenTouch:
