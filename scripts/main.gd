@@ -334,6 +334,27 @@ func _make_hud() -> void:
     interact_button.pressed.connect(Callable(player_node, "interact"))
     layer.add_child(interact_button)
 
+    var sprint_button := Button.new()
+    sprint_button.text = "БЕГ  •  УДЕРЖИВАТЬ"
+    sprint_button.anchor_left = 1.0
+    sprint_button.anchor_top = 1.0
+    sprint_button.anchor_right = 1.0
+    sprint_button.anchor_bottom = 1.0
+    sprint_button.offset_left = -230
+    sprint_button.offset_top = -166
+    sprint_button.offset_right = -24
+    sprint_button.offset_bottom = -104
+    sprint_button.add_theme_font_size_override("font_size", 14)
+    sprint_button.add_theme_color_override("font_color", Color(0.96, 0.98, 1.0))
+    sprint_button.add_theme_color_override("font_hover_color", Color.WHITE)
+    var sprint_style := button_style.duplicate() as StyleBoxFlat
+    sprint_style.bg_color = Color(0.15, 0.29, 0.39, 0.88)
+    sprint_button.add_theme_stylebox_override("normal", sprint_style)
+    sprint_button.add_theme_stylebox_override("pressed", sprint_style)
+    sprint_button.button_down.connect(Callable(player_node, "set_sprinting").bind(true))
+    sprint_button.button_up.connect(Callable(player_node, "set_sprinting").bind(false))
+    layer.add_child(sprint_button)
+
     var move_label := Label.new()
     move_label.text = "ДВИЖЕНИЕ"
     move_label.position = Vector2(56, 18)
