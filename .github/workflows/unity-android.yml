@@ -1,0 +1,39 @@
+name: Build BLACK-CAPTS Unity Android APK
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'UnityProject/**'
+      - '.github/workflows/unity-android.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  android:
+    name: Unity 6 Android APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build Android APK with Unity
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        with:
+          projectPath: UnityProject
+          unityVersion: 6000.0.45f1
+          targetPlatform: Android
+          buildMethod: BuildAndroid.PerformBuild
+          allowDirtyBuild: true
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: BLACK-CAPTS-Unity-Android-APK
+          path: UnityProject/Build/BLACK-CAPTS.apk
+          if-no-files-found: error
+          retention-days: 14
