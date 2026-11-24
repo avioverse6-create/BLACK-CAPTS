@@ -18,6 +18,7 @@ func _ready() -> void:
     _load_progress()
     _make_environment()
     _make_map()
+    _make_parked_vehicle()
     _make_player()
     _make_npcs()
     _make_collectibles()
@@ -66,19 +67,7 @@ func _make_environment() -> void:
 func _make_map() -> void:
     _box("Snow ground", Vector3(0, -0.35, 0), Vector3(88, 0.6, 88), Color(0.83, 0.89, 0.94))
 
-    # Main north-south avenue.
-    _box("Main road", Vector3(0, 0.0, 0), Vector3(8, 0.08, 88), Color(0.25, 0.29, 0.34))
-    for z in range(-40, 41, 5):
-        _box("Main center line dash", Vector3(0, 0.055, z), Vector3(0.12, 0.02, 2.2), Color(0.88, 0.87, 0.76))
-    _box("West sidewalk", Vector3(-5.0, 0.06, 0), Vector3(2.0, 0.18, 88), Color(0.54, 0.59, 0.64))
-    _box("East sidewalk", Vector3(5.0, 0.06, 0), Vector3(2.0, 0.18, 88), Color(0.54, 0.59, 0.64))
-
-    # A second street creates a real four-way junction and opens a new block.
-    _box("South district road", Vector3(0, 0.0, 27), Vector3(64, 0.08, 7), Color(0.25, 0.29, 0.34))
-    for x in range(-29, 30, 5):
-        _box("District center line dash", Vector3(x, 0.055, 27), Vector3(2.2, 0.02, 0.12), Color(0.88, 0.87, 0.76))
-    _box("District north sidewalk", Vector3(0, 0.06, 22.8), Vector3(64, 0.18, 1.4), Color(0.54, 0.59, 0.64))
-    _box("District south sidewalk", Vector3(0, 0.06, 31.2), Vector3(64, 0.18, 1.4), Color(0.54, 0.59, 0.64))
+    _make_road_network()
     for x in range(-3, 4):
         _box("Main crosswalk stripe", Vector3(x * 0.9, 0.06, -2.0), Vector3(0.58, 0.025, 2.8), Color(0.91, 0.93, 0.94))
         _box("District crosswalk stripe", Vector3(x * 0.9, 0.06, 27.0), Vector3(0.58, 0.025, 2.5), Color(0.91, 0.93, 0.94))
@@ -101,6 +90,66 @@ func _make_map() -> void:
     for x in [-28.0, -14.0, 14.0, 28.0]:
         _street_lamp(Vector3(x, 0, 32.2))
     _bus_stop()
+
+func _make_road_network() -> void:
+    var straight := "res://assets/kenney/roads/road-straight.glb"
+    var crossroad := "res://assets/kenney/roads/road-crossroad.glb"
+    if ResourceLoader.exists(straight) and ResourceLoader.exists(crossroad):
+        # The modular road kit is bundled into the APK, so no network is needed in-game.
+        for z in range(-40, 41, 10):
+            if z == 30:
+                continue
+            _place_model(straight, self, Vector3(0, 0.015, z), 0.0, Vector3.ONE)
+        _place_model(crossroad, self, Vector3(0, 0.015, 27), 0.0, Vector3.ONE)
+        for x in range(-30, 31, 10):
+            if x == 0:
+                continue
+            _place_model(straight, self, Vector3(x, 0.015, 27), PI * 0.5, Vector3.ONE)
+        var sidewalk := "res://assets/kenney/roads/road-side.glb"
+        if ResourceLoader.exists(sidewalk):
+            for z in range(-40, 41, 10):
+                _place_model(sidewalk, self, Vector3(-5.0, 0.02, z), 0.0, Vector3.ONE)
+                _place_model(sidewalk, self, Vector3(5.0, 0.02, z), PI, Vector3.ONE)
+        return
+
+    # Fallback for editor sessions before the asset download step.
+    _box("Main road", Vector3(0, 0.0, 0), Vector3(8, 0.08, 88), Color(0.25, 0.29, 0.34))
+    for z in range(-40, 41, 5):
+        _box("Main center line dash", Vector3(0, 0.055, z), Vector3(0.12, 0.02, 2.2), Color(0.88, 0.87, 0.76))
+    _box("West sidewalk", Vector3(-5.0, 0.06, 0), Vector3(2.0, 0.18, 88), Color(0.54, 0.59, 0.64))
+    _box("East sidewalk", Vector3(5.0, 0.06, 0), Vector3(2.0, 0.18, 88), Color(0.54, 0.59, 0.64))
+    _box("South district road", Vector3(0, 0.0, 27), Vector3(64, 0.08, 7), Color(0.25, 0.29, 0.34))
+    for x in range(-29, 30, 5):
+        _box("District center line dash", Vector3(x, 0.055, 27), Vector3(2.2, 0.02, 0.12), Color(0.88, 0.87, 0.76))
+    _box("District north sidewalk", Vector3(0, 0.06, 22.8), Vector3(64, 0.18, 1.4), Color(0.54, 0.59, 0.64))
+    _box("District south sidewalk", Vector3(0, 0.06, 31.2), Vector3(64, 0.18, 1.4), Color(0.54, 0.59, 0.64))
+
+func _place_model(path: String, parent: Node, at: Vector3, yaw: float = 0.0, model_scale: Vector3 = Vector3.ONE) -> bool:
+    if path.is_empty() or not ResourceLoader.exists(path):
+        return false
+    var packed := load(path) as PackedScene
+    if packed == null:
+        return false
+    var instance := packed.instantiate() as Node3D
+    if instance == null:
+        return false
+    instance.position = at
+    instance.rotation.y = yaw
+    instance.scale = model_scale
+    parent.add_child(instance)
+    return true
+
+func _make_parked_vehicle() -> void:
+    var car_path := "res://assets/kenney/vehicles/sedan.glb"
+    if _place_model(car_path, self, Vector3(7.2, 0.05, 5.0), PI * 0.5, Vector3.ONE):
+        var body := StaticBody3D.new()
+        body.position = Vector3(7.2, 0.9, 5.0)
+        var collision := CollisionShape3D.new()
+        var shape := BoxShape3D.new()
+        shape.size = Vector3(2.0, 1.6, 4.2)
+        collision.shape = shape
+        body.add_child(collision)
+        add_child(body)
 
 func _box(label: String, at: Vector3, size: Vector3, color: Color) -> MeshInstance3D:
     var body := StaticBody3D.new()
@@ -126,22 +175,33 @@ func _box(label: String, at: Vector3, size: Vector3, color: Color) -> MeshInstan
     return node
 
 func _building(label: String, at: Vector3, size: Vector3, color: Color) -> void:
+    var asset_path := ""
+    match label:
+        "Cabin": asset_path = "res://assets/kenney/buildings/building-type-a.glb"
+        "Shop": asset_path = "res://assets/kenney/buildings/building-commercial-a.glb"
+        "House": asset_path = "res://assets/kenney/buildings/building-type-b.glb"
+        "North apartment": asset_path = "res://assets/kenney/buildings/building-type-c.glb"
+        "North garage": asset_path = "res://assets/kenney/buildings/building-type-d.glb"
+        "South house": asset_path = "res://assets/kenney/buildings/building-type-e.glb"
+        "South workshop": asset_path = "res://assets/kenney/buildings/building-type-f.glb"
+
+    if _place_model(asset_path, self, at, 0.0, Vector3.ONE * 0.85):
+        var blocker := StaticBody3D.new()
+        blocker.name = label + " Collision"
+        blocker.position = at
+        var collision := CollisionShape3D.new()
+        var shape := BoxShape3D.new()
+        shape.size = size
+        collision.shape = shape
+        collision.position.y = size.y * 0.5
+        blocker.add_child(collision)
+        add_child(blocker)
+        return
+
+    # Editor fallback only; Android builds download the real CC0 building models.
     _box(label, at + Vector3(0, size.y * 0.5, 0), size, color)
     _box(label + " snow roof", at + Vector3(0, size.y + 0.18, 0), Vector3(size.x + 0.5, 0.35, size.z + 0.5), Color(0.93, 0.97, 1.0))
-    var window_mat := StandardMaterial3D.new()
-    window_mat.albedo_color = Color(0.12, 0.20, 0.27)
-    window_mat.roughness = 0.7
-    for side in [-1.0, 1.0]:
-        for row in range(2):
-            for col in range(2):
-                var window := MeshInstance3D.new()
-                var pane := BoxMesh.new()
-                pane.size = Vector3(1.25, 1.05, 0.08)
-                window.mesh = pane
-                window.material_override = window_mat
-                window.rotation.y = PI * 0.5
-                window.position = at + Vector3(side * (size.x * 0.5 + 0.045), 1.8 + row * 2.0, -1.8 + col * 3.5)
-                add_child(window)
+
 
 func _street_lamp(at: Vector3) -> void:
     var pole := MeshInstance3D.new()
@@ -187,6 +247,8 @@ func _bus_stop() -> void:
     _box("Bus stop bench seat", base + Vector3(0, 0.62, -0.48), Vector3(2.1, 0.12, 0.42), Color(0.34, 0.25, 0.19))
 
 func _tree(at: Vector3) -> void:
+    if _place_model("res://assets/kenney/props/tree-large.glb", self, at, 0.0, Vector3.ONE):
+        return
     _box("Tree trunk", at + Vector3(0, 1.1, 0), Vector3(0.45, 2.2, 0.45), Color(0.27, 0.20, 0.16))
     var crown := _box("Snowy pine", at + Vector3(0, 3.0, 0), Vector3(2.1, 2.5, 2.1), Color(0.72, 0.83, 0.85))
     crown.rotation_degrees.y = 45
